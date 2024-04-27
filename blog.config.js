@@ -279,7 +279,7 @@ const BLOG = {
   WIDGET_PET: process.env.NEXT_PUBLIC_WIDGET_PET || true, // 是否显示宠物挂件
   WIDGET_PET_LINK:
     process.env.NEXT_PUBLIC_WIDGET_PET_LINK ||
-    'https://raw.githubusercontent.com/imuncle/live2d/master/model/dollsfrontline/kp31_310/destroy/model.json', // 挂件模型地址 @see https://github.com/xiazeyu/live2d-widget-models
+    'https://jsd.toshiki.dev/gh/andatoshiki/toshiki-live2d/%E7%A2%A7%E8%93%9D%E8%88%AA%E7%BA%BF%20Azue%20Lane/Azue%20Lane(JP)/xuefeng_3/xuefeng_3.model3.json', // 挂件模型地址 live2d 地址 @see https://github.com/xiazeyu/live2d-widget-models
   WIDGET_PET_SWITCH_THEME:
     process.env.NEXT_PUBLIC_WIDGET_PET_SWITCH_THEME || false, // 点击宠物挂件切换博客主题
 
