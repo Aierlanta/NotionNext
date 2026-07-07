@@ -1,0 +1,114 @@
+'use client'
+
+import { useEffect, useCallback, useRef } from 'react'
+import { isBrowser } from '@/lib/utils'
+
+/**
+ * Viewport Scale Hook - Endfield-style proportional scaling
+ * 
+ * This hook dynamically adjusts the html element's font-size based on viewport dimensions,
+ * allowing all rem-based measurements to scale proportionally.
+ * 
+ * Algorithm based on Endfield website:
+ * - Landscape: design base 1920 x 1080 (standard HD for larger content)
+ * - Portrait: design base 390 x 844 (iPhone 14 size for mobile)
+ * - Scales by whichever dimension maintains aspect ratio
+ */
+const useViewportScale = (options = {}) => {
+  const {
+    // 1440x900 as landscape base for larger content on regular screens (similar to Notion style)
+    landscapeBase = { width: 1440, height: 900 },
+    // 390x844 as portrait base (iPhone 14 size)
+    portraitBase = { width: 390, height: 844 },
+    baseFontSize = 16,
+    minFontSize = 14,
+    maxFontSize = 24
+  } = options
+
+  // Cache previous dimensions to avoid unnecessary updates
+  const viewportSizeRef = useRef({ width: 0, height: 0 })
+
+  const applyScale = useCallback(() => {
+    if (!isBrowser) return
+
+    const innerWidth = window.innerWidth
+    const innerHeight = window.innerHeight
+
+    // Skip if dimensions haven't changed
+    if (
+      innerWidth === viewportSizeRef.current.width &&
+      innerHeight === viewportSizeRef.current.height
+    ) {
+      return
+    }
+    viewportSizeRef.current = { width: innerWidth, height: innerHeight }
+
+    let fontSize = baseFontSize
+
+    if (innerHeight >= innerWidth) {
+      // Portrait mode: use portrait design base (1080 x 1920)
+      const designWidth = portraitBase.width
+      const designHeight = portraitBase.height
+      
+      if (innerWidth / innerHeight > designWidth / designHeight) {
+        // Viewport is wider than design ratio, scale by height
+        fontSize = baseFontSize * (innerHeight / designHeight)
+      } else {
+        // Viewport is taller than design ratio, scale by width
+        fontSize = baseFontSize * (innerWidth / designWidth)
+      }
+    } else {
+      // Landscape mode: use landscape design base (2560 x 1440)
+      const designWidth = landscapeBase.width
+      const designHeight = landscapeBase.height
+      
+      if (innerWidth / innerHeight > designWidth / designHeight) {
+        // Viewport is wider than design ratio, scale by height
+        fontSize = baseFontSize * (innerHeight / designHeight)
+      } else {
+        // Viewport is narrower than design ratio, scale by width
+        fontSize = baseFontSize * (innerWidth / designWidth)
+      }
+    }
+
+    // Clamp font size to reasonable bounds
+    fontSize = Math.max(minFontSize, Math.min(maxFontSize, fontSize))
+
+    // CSS owns the initial html font-size to avoid hydration-time CLS.
+    const html = document.documentElement
+    html.style.setProperty('--endspace-viewport-scale', (fontSize / baseFontSize).toString())
+    html.style.setProperty('--endspace-base-font-size', `${fontSize}px`)
+  }, [landscapeBase, portraitBase, baseFontSize, minFontSize, maxFontSize])
+
+  useEffect(() => {
+    if (!isBrowser) return
+
+    // Apply initial scale immediately
+    applyScale()
+
+    // Handle resize events
+    const handleResize = () => {
+      applyScale()
+    }
+
+    // Handle orientation change with small delay for browser to settle
+    const handleOrientationChange = () => {
+      setTimeout(applyScale, 100)
+    }
+
+    window.addEventListener('resize', handleResize)
+    window.addEventListener('orientationchange', handleOrientationChange)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('orientationchange', handleOrientationChange)
+      document.documentElement.style.removeProperty('--endspace-viewport-scale')
+      document.documentElement.style.removeProperty('--endspace-base-font-size')
+    }
+  }, [applyScale])
+
+  return { applyScale }
+}
+
+export default useViewportScale
