@@ -77,6 +77,11 @@ function clearMotionLoop() {
     activeMotionInterval = null
   }
 
+  if (touchCooldownTimer) {
+    clearTimeout(touchCooldownTimer)
+    touchCooldownTimer = null
+  }
+
   if (activeModel && activeMotionHandler) {
     activeModel.off('motionFinish', activeMotionHandler)
     activeMotionHandler = null
@@ -142,6 +147,100 @@ function applyVisualTuning(model) {
 
 /** 每隔多少毫秒强制切下一个 idle（不依赖 motionFinish，避免动一会就停） */
 const MOTION_INTERVAL_MS = 9000
+
+/** 点击后暂停 idle 切换的时长，让 touch 动画完整播完 */
+const TOUCH_COOLDOWN_MS = 4000
+
+let touchCooldownTimer = null
+
+/** 两侧点击区域占模型宽度的比例（左右各 25%） */
+const SIDE_ZONE_RATIO = 0.25
+
+/** 两侧点击时随机播放的特殊动画 */
+const SIDE_MOTIONS = [
+  'login', 'complete', 'effect', 'mail',
+  'mission', 'mission_complete', 'wedding'
+]
+
+/**
+ * 点击角色：
+ * - 两侧 → 随机播放 login/effect/wedding 等特殊动画
+ * - 中间上半部分 → touch_head / touch_drag
+ * - 中间下半部分 → touch_body / touch_special
+ * - 20% 概率混入 touch_idle
+ */
+function handleModelClick(model, localX, localY) {
+  if (!model?.internalModel?.motionManager) {
+    return
+  }
+
+  const defs = model.internalModel.motionManager.definitions
+  const xRatio = localX / model.width
+  const yRatio = localY / model.height
+
+  let candidates = []
+
+  if (xRatio < SIDE_ZONE_RATIO || xRatio > 1 - SIDE_ZONE_RATIO) {
+    // 两侧区域 → 特殊动画
+    candidates = SIDE_MOTIONS.filter(g => defs[g])
+  } else {
+    // 中间区域 → touch 系列
+    if (yRatio < 0.4) {
+      for (const g of ['touch_head', 'touch_drag1', 'touch_drag2', 'touch_drag3']) {
+        if (defs[g]) candidates.push(g)
+      }
+    } else {
+      for (const g of ['touch_body', 'touch_special']) {
+        if (defs[g]) candidates.push(g)
+      }
+    }
+
+    const touchIdles = Object.keys(defs).filter(k => /^touch_idle/i.test(k))
+    if (touchIdles.length > 0 && Math.random() < 0.2) {
+      candidates = touchIdles
+    }
+  }
+
+  if (candidates.length === 0) {
+    return
+  }
+
+  const group = candidates[Math.floor(Math.random() * candidates.length)]
+  const count = defs[group]?.length || 1
+  const index = Math.floor(Math.random() * count)
+
+  if (activeMotionInterval) {
+    clearInterval(activeMotionInterval)
+    activeMotionInterval = null
+  }
+  if (touchCooldownTimer) {
+    clearTimeout(touchCooldownTimer)
+  }
+
+  const mm = model.internalModel.motionManager
+  if (typeof mm.stopAllMotions === 'function') {
+    mm.stopAllMotions()
+  }
+  model.motion(group, index).catch(() => {})
+
+  touchCooldownTimer = setTimeout(() => {
+    touchCooldownTimer = null
+    if (activeModel === model && !activeMotionInterval) {
+      const idle = () => {
+        if (activeModel !== model) return
+        applyVisualTuning(model)
+        const idleGroups = Object.keys(defs).filter(k => /^(home|main_|idle\d*$)/i.test(k))
+        if (idleGroups.length === 0) return
+        if (typeof mm.stopAllMotions === 'function') mm.stopAllMotions()
+        const g = idleGroups[Math.floor(Math.random() * idleGroups.length)]
+        const c = defs[g]?.length || 1
+        model.motion(g, Math.floor(Math.random() * c)).catch(() => {})
+      }
+      activeMotionInterval = setInterval(idle, MOTION_INTERVAL_MS)
+      idle()
+    }
+  }, TOUCH_COOLDOWN_MS)
+}
 
 function startIdleLoop(model, sessionId, app) {
   const definitions = model?.internalModel?.motionManager?.definitions
@@ -274,6 +373,13 @@ async function mountMoc3Pet(sessionId, container, petLink) {
 
   activeFocusHandler = e => model.focus?.(e.clientX, e.clientY)
   window.addEventListener('mousemove', activeFocusHandler, { passive: true })
+
+  model.interactive = true
+  model.buttonMode = true
+  model.on('pointertap', e => {
+    const local = e.data.getLocalPosition(model)
+    handleModelClick(model, local.x, local.y)
+  })
 
   startIdleLoop(model, sessionId, app)
 }
