@@ -9,7 +9,7 @@ module.exports = {
   WIDGET_PET: process.env.NEXT_PUBLIC_WIDGET_PET || true, // 是否显示宠物挂件
   WIDGET_PET_LINK:
     process.env.NEXT_PUBLIC_WIDGET_PET_LINK ||
-    'https://static.l2d.su/azurlane/live2d/zhenzhuhao_2/zhenzhuhao_2.model3.json', // l2d.su 皮肤9600141「魔堡中的堕天使」(珍珠号)，支持moc3(.model3.json)和Cubism2(model.json)格式
+    'https://static.l2d.su/azurlane/live2d/lafei_4/lafei_4.model3.json', // l2d.su 皮肤101173「白兔迎春」(拉菲)，支持moc3(.model3.json)和Cubism2(model.json)格式
   WIDGET_PET_SWITCH_THEME:
     process.env.NEXT_PUBLIC_WIDGET_PET_SWITCH_THEME || false, // 点击宠物挂件切换博客主题
 

@@ -15,19 +15,6 @@ import { useEffect, useRef } from 'react'
 const CANVAS_W = 290
 const CANVAS_H = 430
 
-/**
- * 裁切参数：canvas 430px 高，角色只占底部 ~210px，顶部空白会渲染成黑色。
- * 用 overflow:hidden 物理裁掉黑区，再用四边蒙版做柔和淡出。
- */
-const CROP_TOP = 225
-const VIEW_H = CANVAS_H - CROP_TOP
-
-const FADE_H = 'linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%)'
-const FADE_V = 'linear-gradient(to bottom, transparent 0%, #000 24%, #000 84%, transparent 100%)'
-
-/** 关闭光环/补框；保留 fw1 粉雾做底部自然过渡 */
-const SUPPRESS_GLOW_PARAMS = ['ghfh', 'bk']
-
 let runtimeReady = null
 let tickerRegistered = false
 let sessionCounter = 0
@@ -39,8 +26,6 @@ let activeModel = null
 let activeContainer = null
 let activePetLink = null
 let activeFocusHandler = null
-let activeMotionHandler = null
-let activeTickerHandler = null
 let activeMotionInterval = null
 
 async function ensureMoc3Runtime() {
@@ -81,16 +66,6 @@ function clearMotionLoop() {
     clearTimeout(touchCooldownTimer)
     touchCooldownTimer = null
   }
-
-  if (activeModel && activeMotionHandler) {
-    activeModel.off('motionFinish', activeMotionHandler)
-    activeMotionHandler = null
-  }
-
-  if (activeApp && activeTickerHandler) {
-    activeApp.ticker.remove(activeTickerHandler)
-    activeTickerHandler = null
-  }
 }
 
 function teardownImmediate() {
@@ -101,12 +76,22 @@ function teardownImmediate() {
 
   clearMotionLoop()
 
-  activeModel = null
+  // 先销毁 model，再销毁 app；不要强制 texture/baseTexture:true，
+  // 热更新时会把贴图资源打坏，表现为全黑剪影。
+  if (activeModel) {
+    try {
+      activeModel.destroy()
+    } catch {
+      // ignore
+    }
+    activeModel = null
+  }
+
   activeContainer = null
   activePetLink = null
 
   if (activeApp) {
-    activeApp.destroy(true, { children: true, texture: true, baseTexture: true })
+    activeApp.destroy(true, { children: true })
     activeApp = null
   }
 }
@@ -121,28 +106,6 @@ function scheduleTeardown(sessionId) {
       teardownImmediate()
     }
   }, 300)
-}
-
-/** 隐藏场景框 + 关闭粉雾/光环（不能隐藏 Normal_2 / Part3，会破坏渲染） */
-function applyVisualTuning(model) {
-  const core = model?.internalModel?.coreModel
-  if (!core) {
-    return
-  }
-
-  try {
-    core.setPartOpacityById('Background', 0)
-  } catch {
-    // ignore
-  }
-
-  for (const paramId of SUPPRESS_GLOW_PARAMS) {
-    try {
-      core.setParameterValueById(paramId, 0)
-    } catch {
-      // ignore
-    }
-  }
 }
 
 /** 每隔多少毫秒强制切下一个 idle（不依赖 motionFinish，避免动一会就停） */
@@ -228,7 +191,6 @@ function handleModelClick(model, localX, localY) {
     if (activeModel === model && !activeMotionInterval) {
       const idle = () => {
         if (activeModel !== model) return
-        applyVisualTuning(model)
         const idleGroups = Object.keys(defs).filter(k => /^(home|main_|idle\d*$)/i.test(k))
         if (idleGroups.length === 0) return
         if (typeof mm.stopAllMotions === 'function') mm.stopAllMotions()
@@ -242,7 +204,7 @@ function handleModelClick(model, localX, localY) {
   }, TOUCH_COOLDOWN_MS)
 }
 
-function startIdleLoop(model, sessionId, app) {
+function startIdleLoop(model, sessionId) {
   const definitions = model?.internalModel?.motionManager?.definitions
   if (!definitions) {
     return
@@ -260,8 +222,6 @@ function startIdleLoop(model, sessionId, app) {
       return
     }
 
-    applyVisualTuning(model)
-
     const mm = model.internalModel.motionManager
     if (typeof mm.stopAllMotions === 'function') {
       mm.stopAllMotions()
@@ -274,22 +234,8 @@ function startIdleLoop(model, sessionId, app) {
     model.motion(group, index).catch(() => {})
   }
 
-  activeTickerHandler = () => {
-    if (sessionId !== activeSession || activeModel !== model) {
-      return
-    }
-    applyVisualTuning(model)
-  }
-  app.ticker.add(activeTickerHandler)
-
   // 主循环：定时强制切换，某些 motion 不会触发 motionFinish 导致卡住
   activeMotionInterval = setInterval(playNext, MOTION_INTERVAL_MS)
-
-  // 若 motion 提前播完，可更早切换（optional 加速）
-  activeMotionHandler = () => {
-    applyVisualTuning(model)
-  }
-  model.on('motionFinish', activeMotionHandler)
 
   playNext()
 }
@@ -315,11 +261,13 @@ async function mountMoc3Pet(sessionId, container, petLink) {
     return
   }
 
-  if (activeApp && activeContainer === container) {
+  if (activeApp) {
     teardownImmediate()
   }
 
-  const model = await PIXI.live2d.Live2DModel.from(petLink)
+  const model = await PIXI.live2d.Live2DModel.from(petLink, {
+    crossOrigin: 'anonymous'
+  })
   if (sessionId !== sessionCounter) {
     model.destroy()
     return
@@ -331,6 +279,8 @@ async function mountMoc3Pet(sessionId, container, petLink) {
     backgroundAlpha: 0,
     autoStart: true,
     antialias: true,
+    clearBeforeRender: true,
+    preserveDrawingBuffer: true,
     resolution: Math.min(window.devicePixelRatio || 1, 2)
   })
 
@@ -352,18 +302,15 @@ async function mountMoc3Pet(sessionId, container, petLink) {
 
   container.replaceChildren(view)
 
-  const scale =
-    Math.min(
-      CANVAS_W / model.internalModel.width,
-      CANVAS_H / model.internalModel.height
-    ) * 1.12
+  const scale = Math.min(
+    CANVAS_W / model.internalModel.width,
+    CANVAS_H / model.internalModel.height
+  )
 
   model.scale.set(scale)
   model.anchor.set(0.5, 1)
-  model.position.set(CANVAS_W / 2, CANVAS_H - 10)
+  model.position.set(CANVAS_W / 2, CANVAS_H)
   app.stage.addChild(model)
-
-  applyVisualTuning(model)
 
   activeSession = sessionId
   activeApp = app
@@ -381,7 +328,7 @@ async function mountMoc3Pet(sessionId, container, petLink) {
     handleModelClick(model, local.x, local.y)
   })
 
-  startIdleLoop(model, sessionId, app)
+  startIdleLoop(model, sessionId)
 }
 
 /**
@@ -453,20 +400,12 @@ export default function Live2D() {
   return (
     <div
       className='relative z-50 ml-14'
-      style={{
-        width: CANVAS_W,
-        height: VIEW_H,
-        overflow: 'hidden',
-        WebkitMaskImage: `${FADE_H}, ${FADE_V}`,
-        WebkitMaskComposite: 'source-in',
-        maskImage: `${FADE_H}, ${FADE_V}`,
-        maskComposite: 'intersect'
-      }}
+      style={{ width: CANVAS_W, height: CANVAS_H }}
       onClick={handleClick}>
       <div
         ref={containerRef}
         className='pointer-events-auto'
-        style={{ width: CANVAS_W, height: CANVAS_H, marginTop: -CROP_TOP }}
+        style={{ width: CANVAS_W, height: CANVAS_H }}
       />
     </div>
   )
