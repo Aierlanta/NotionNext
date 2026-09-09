@@ -32,7 +32,7 @@
 
 本项目在长期维护更新中，不时将修复一些bug和增加新特性。新版本中对页面样式以及加载速度都做了大量的优化，因此推荐您更新到最新版。
 
-您可以在[NotionNext的Github仓库](https://github.com/tangly1024/NotionNext)右上角点击Star，以便关注项目动态，您将第一时间收到新版本发布的消息。
+您可以在[NotionNext的Github仓库](https://github.com/notionnext-org/NotionNext)右上角点击Star，以便关注项目动态，您将第一时间收到新版本发布的消息。
 
 ![Untitled](/legacy/5c03aa929431ec11.png)
 
@@ -41,6 +41,40 @@
 [NotionNext文档](/user-guide/changelog/latest)
 
 NotionNext教程
+
+## 4.10.10 升级提示
+
+`4.10.10` 是一次小版本维护发布。普通站点同步最新 `main` 后重新部署即可，不需要新增必填环境变量。
+
+如果你希望 Notion 文章中的未收录内嵌子页面 URL 跟随父级文章路径，推荐在 Notion Config 配置中心添加：
+
+```txt
+Key:   INNER_PAGE_URL_PARENT_PATH
+Value: true
+```
+
+该方式不需要修改代码。也可以在部署平台添加环境变量：
+
+```bash
+NEXT_PUBLIC_INNER_PAGE_URL_PARENT_PATH=true
+```
+
+开启后，文章 `/article/fpga-studying-notes` 中未收录的子页面链接会显示为 `/article/fpga-studying-notes/{pageId}`。已收录到数据库并配置了 `slug` 的页面仍优先使用自己的正式地址。
+
+使用说明见 [URL 自定义：内嵌子页面跟随父路径](./config/url-customize.md#内嵌子页面跟随父路径)，完整发布说明见 [最新版本更新日志](./changelog/latest.md)。
+
+## 4.10.9 升级提示
+
+`4.10.9` 是一次小版本维护发布。普通站点同步最新 `main` 后重新部署即可，不需要新增必填环境变量。
+
+建议升级后重点检查：
+
+- 首页和菜单是否仍能正确读取 Notion Config；新版已兼容 Notion 的 `collection_view_page` 配置库块。
+- 含有数据库视图、HTML 块、Tabs 块或同步块的文章是否可以正常构建和打开。
+- 自定义菜单如果指向隐藏页面，目标页面可以设为 `Invisible`，菜单会跳转到该页面真实生成的地址。
+- 使用 Matery、Claude、Typography、Game、Nobelium、Plog 等主题时，检查移动端标签、分享栏、菜单图标和加密文章提交按钮。
+
+如果你的 fork 很久没有同步，仍然推荐先备份 `blog.config.js`、主题配置和自定义代码，再执行 `Sync fork`。
 
 
 ## 关于代码备份
@@ -85,6 +119,27 @@ NotionNext教程
 
 1. 显示 `Sync fork` 按钮，点击并选择 `Update branch` 按钮，即可自动更新。
 ![Untitled](/legacy/03ded28f962b1c4f.png)
+
+::: tip 按需开启自动同步
+NotionNext 默认不再每天自动运行 `Upstream Sync`，避免 fork 站长在同步失败时反复收到 GitHub Actions 邮件。
+
+平时建议使用上面的 `Sync fork` 按钮手动更新。只有你确实希望仓库每天自动同步上游时，再打开 `.github/workflows/sync.yaml`，在 `on:` 下加入：
+
+```yaml
+  schedule:
+    - cron: "0 0 * * *"
+```
+
+保存并提交后，GitHub Actions 会恢复每日自动同步。若后续又收到失败邮件，删除这段 `schedule` 即可恢复为手动更新。
+:::
+
+::: warning 旧自动流程导致 Vercel 构建失败
+如果 Vercel 里出现 `chore(release): bump package.json ... [skip-version]` 之类的失败记录，通常是旧版自动更新流程触发了无意义的生产重建。
+
+先恢复线上站点：进入 Vercel 项目 `Deployments`，找到最近一条绿色 `Ready` 的 `Production` 记录，点击右侧 `...`，选择 `Promote to Production` 或 `Redeploy`。
+
+再处理根因：同步最新 NotionNext 代码。本仓库已默认关闭 `Upstream Sync` 定时任务，并让 Vercel 跳过 `[skip-version]` 版本号提交，减少自动流程对站长的打扰。
+:::
 
 1. 没有上面两种情况的按钮，这种情况下大概率是因为修改了相同部分的代码导致冲突，需要手动确认才能合并，请看下文。
 
@@ -134,9 +189,6 @@ NotionNext教程
 操作方式，联系小助理告知”代码付费升级“，定价是￥**9.9/**次。
 :::
 
-- 更多手动方案，感谢网友们的分享！
-[NotionNext更新冲突手动解决方案 | 凌云·LinYun](https://www.linyunlink.top/article/post-240629)
-
 NotionNext更新冲突？网上教程还要VS code和git?通通不需要，马上解决冲突！
 [047 一种更新NotionNext版本的简单方法 | Dongdong’s Blog](https://ddw2019.com/047)
 
@@ -144,6 +196,51 @@ NotionNext更新冲突？网上教程还要VS code和git?通通不需要，马�
 [手动 NotionNext 版本更新教程 | D_SUPER BLOG](https://www.dsuper.xyz/article/notionnext_update_221228)
 
 勤劳的 tangly1024 [ Github][ Blog] 大大又更新了 NotionNext 内容。之前的更新内容不涉及 blog.config.js 文件（配置博客唯一要更改的文件），可以直接 Fetch upstream → Fetch and merge 跟进版本。但是这次涉及到 blog.config.js 文件的修改，新旧内容冲突导致 Github 懵了，需要手动更新。数日前就看到需要更新，今天才得以抽空完成这一"大工程"（实在是懒）。 (1) 浏览器 [Github 已经 Fork 过 NotionNext 项目]; (2) Github desktop 客户端 [ 安装地址]; (3) Visual Studio Code - VS Code [ 安装地址].
+
+
+## Github 自动化（高阶方法，需要一定知识）
+
+除了手动点击 `Fetch upstream` / `Sync fork` 按钮，仓库内置了一个 GitHub Actions workflow（[`.github/workflows/sync.yaml`](https://github.com/notionnext-org/NotionNext/blob/main/.github/workflows/sync.yaml)），可以自动帮你完成每日同步上游最新代码的工作。
+
+### 功能说明
+
+该 workflow 每天 UTC 0点（对应北京时间早上8点）自动运行一次，将上游仓库 `notionnext-org/NotionNext` 的 `main` 分支同步合并到你 fork 仓库的 `main` 分支，不需要每天手动点击更新按钮。
+
+关键配置如下：
+
+```yaml
+on:
+  schedule:
+    - cron: "0 0 * * *" # every day
+  workflow_dispatch:
+
+jobs:
+  sync_latest_from_upstream:
+    if: ${{ github.event.repository.fork }}
+    steps:
+      - uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        with:
+          upstream_sync_repo: notionnext-org/NotionNext
+          upstream_sync_branch: main
+          target_sync_branch: main
+```
+
+### 启用自动化（重点）
+
+::: warning 注意
+GitHub 出于安全考虑，**新 fork 的仓库默认关闭了 Actions（自动化）功能**，需要手动启用一次才能生效：
+:::
+
+1. 打开自己 fork 的仓库，点击顶部的 `Actions` 标签；
+2. 如果看到提示条 "Workflows aren't being run on this forked repository"，点击 `I understand my workflows, go ahead and enable them` 按钮启用 Actions；
+3. 启用后，左侧列表中会出现 `Upstream Sync` workflow，代表自动化已生效，之后会按计划每天自动运行一次；
+4. 你也可以随时打开该 workflow 页面，点击右上角的 `Run workflow` 按钮手动立即触发一次同步。
+
+### 注意事项
+
+- GitHub 会在 fork 仓库连续60天没有任何活动时自动禁用其 Actions，届时需要重新按上述步骤启用一次。
+- 若上游仓库修改了 workflow 文件本身，GitHub 会自动暂停本仓库该 workflow 的运行，导致自动同步失败，此时需要按前文"简单更新方法"章节中手动 `Sync fork` 的方式操作一次，才能恢复自动化。
+- 该自动化只负责同步代码，仍可能产生代码冲突（例如你修改过 `blog.config.js`），冲突的处理方式与手动更新一致，参考上文"带有冲突的更新"章节。
 
 
 ## 优化建议

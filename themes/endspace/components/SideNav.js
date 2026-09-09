@@ -25,9 +25,37 @@ import WechatFillIcon from 'remixicon-react/WechatFillIcon'
 import GlobeFillIcon from 'remixicon-react/GlobeFillIcon'
 import MailFillIcon from 'remixicon-react/MailFillIcon'
 
+const OrcidIcon = ({ size = 16 }) => (
+  <i
+    className='fab fa-orcid'
+    aria-hidden='true'
+    style={{ fontSize: size, lineHeight: 1 }}
+  />
+)
+
+const CsdnIcon = ({ size = 16 }) => (
+  <i
+    className='fab fa-csdn'
+    aria-hidden='true'
+    style={{ fontSize: size, lineHeight: 1 }}
+  />
+)
+
+const JuejinIcon = ({ size = 16 }) => (
+  <i
+    className='fab fa-juejin'
+    aria-hidden='true'
+    style={{ fontSize: size, lineHeight: 1 }}
+  />
+)
+
+
 // Social icon mapping
 const SocialIconComponents = {
   'CONTACT_GITHUB': GithubFillIcon,
+  'CONTACT_ORCID': OrcidIcon,
+  'CONTACT_CSDN': CsdnIcon,
+  'CONTACT_JUEJIN': JuejinIcon,
   'CONTACT_TWITTER': IconBrandX,
   'CONTACT_WEIBO': WeiboFillIcon,
   'CONTACT_BILIBILI': BilibiliFillIcon,
@@ -69,6 +97,9 @@ export const SideNav = (props) => {
   // Social icon config - using contact.config.js settings
   const socialLinks = [
     { key: 'CONTACT_GITHUB', label: 'GitHub' },
+    { key: 'CONTACT_ORCID', label: 'ORCID' },
+    { key: 'CONTACT_CSDN', label: 'CSDN' },
+    { key: 'CONTACT_JUEJIN', label: '稀土掘金' },
     { key: 'CONTACT_TWITTER', label: 'Twitter' },
     { key: 'CONTACT_WEIBO', label: 'Weibo' },
     { key: 'CONTACT_BILIBILI', label: 'Bilibili' },
@@ -236,9 +267,9 @@ export const SideNav = (props) => {
                 <div className="ml-[5rem] mr-3 border-l border-[var(--endspace-border-base)] py-1">
                   {item.subMenus.map(subItem => (
                     <SmartLink key={subItem.id || subItem.path} href={subItem.path} target={subItem.target}>
-                      <div className={`py-2 pl-4 pr-2 text-xs uppercase tracking-wide transition-colors hover:bg-[#d4d4d8] ${
+                      <div className={`py-2 pl-4 pr-2 text-xs uppercase tracking-wide transition-colors hover:bg-[var(--endspace-bg-secondary)] ${
                         pathMatches(router.asPath, subItem.path)
-                          ? 'font-bold text-black'
+                          ? 'font-bold text-[var(--endspace-text-primary)]'
                           : 'text-[var(--endspace-text-secondary)]'
                       }`}>
                         {subItem.name}

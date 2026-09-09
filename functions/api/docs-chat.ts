@@ -27,6 +27,7 @@ type ChatRequestBody = {
 
 const DEFAULT_MODEL = 'gemini-flash-lite-latest'
 const DEFAULT_MAX_TOKENS = 1200
+const DEFAULT_CORS_ORIGINS = ['https://notionnext.tangly1024.com']
 const MAX_REQUEST_BYTES = 20_000
 const MAX_MESSAGES = 6
 const MAX_USER_TEXT_CHARS = 1000
@@ -59,7 +60,7 @@ const SYSTEM_PROMPT = `你是 NotionNext 文档助手。
 - /user-guide/themes/THEMES_CATALOG
 - /user-guide/reference/features
 - /user-guide/comments/overview
-- /user-guide/deploy/cloudflare-pages-docs`
+- /user-guide/deploy/cloudflare-pages`
 
 const json = (body: unknown, init: ResponseInit = {}) =>
   new Response(JSON.stringify(body), {
@@ -72,9 +73,10 @@ const json = (body: unknown, init: ResponseInit = {}) =>
 
 const corsHeaders = (request: Request, env: Env) => {
   const origin = request.headers.get('origin')
-  const allowed = env.DOCS_CHAT_CORS_ORIGINS?.split(',')
-    .map(item => item.trim())
-    .filter(Boolean)
+  const allowed =
+    env.DOCS_CHAT_CORS_ORIGINS?.split(',')
+      .map(item => item.trim())
+      .filter(Boolean) || DEFAULT_CORS_ORIGINS
 
   if (!origin || !allowed?.length) {
     return {}

@@ -1,6 +1,6 @@
-# 内置主题全览（25 个）
+# 内置主题全览（27 个）
 
-> 与 `themes/` 目录及 `conf/themeSwitch.manifest.js` 同步 · 当前版本 **4.10.2**
+> 与 `themes/` 目录及 `conf/themeSwitch.manifest.js` 同步 · 当前版本 **4.10.10**
 > 先按站点目标选主题，再进入单个主题文档看配置。
 
 预览：`https://preview.tangly1024.com/?theme=<id>`（`id` 为下表主题 ID，小写）。
@@ -11,9 +11,9 @@
 
 | 你想做什么 | 优先看 | 备选 | 选择理由 |
 | --- | --- | --- | --- |
-| 个人博客 / 日常写作 | [simple](./simple.md)、[hexo](./hexo.md) | [nobelium](./nobelium.md)、[typography](./typography.md) | 结构清楚、文章优先、配置负担低 |
+| 个人博客 / 日常写作 | [simple](./simple.md)、[hexo](./hexo.md) | [xuhome](./xuhome.md)、[nobelium](./nobelium.md)、[typography](./typography.md) | 结构清楚、文章优先；XuHome 适合希望强化视觉辨识度的站长 |
 | 文档 / 知识库 / 教程站 | [gitbook](./gitbook.md)、[claude](./claude.md) | [thoughtlite](./thoughtlite.md) | 侧边栏、目录和阅读连续性更强 |
-| 作品集 / 个人品牌 | [proxio](./proxio.md)、[starter](./starter.md) | [landing](./landing.md) | 首屏表达强，适合展示身份、作品和服务 |
+| 作品集 / 个人品牌 | [opc](./opc.md)、[proxio](./proxio.md) | [starter](./starter.md)、[landing](./landing.md) | 首屏表达强，适合展示身份、作品、服务和 AI 任务流水线 |
 | 产品官网 / SaaS 落地页 | [starter](./starter.md)、[landing](./landing.md) | [commerce](./commerce.md) | 有产品介绍、功能区块、价格和 CTA 结构 |
 | 图片 / 摄影 / 视觉内容 | [photo](./photo.md)、[plog](./plog.md) | [magzine](./magzine.md) | 图片展示密度更高，适合视觉浏览 |
 | 导航站 / 资源聚合 | [nav](./nav.md) | [gitbook](./gitbook.md) | 更适合分类入口、链接集合和资源导航 |
@@ -32,6 +32,20 @@
 - 想突出图片：选 `photo`。
 
 部署成功后再换主题也可以，主题 ID 改完重新部署即可。
+
+## 4.10.10 主题体验修复
+
+- Magzine：恢复文章页广告与侧栏间距，避免正文和广告区域贴得过近。
+- 主题设置抽屉：增加更顺滑的动效反馈，打开和关闭时更自然。
+- XuHome：完成主线集成，并补充深色模式对比度与调色板实时生效修复。
+
+## 4.10.9 主题体验修复
+
+- Matery：优化移动端文章标题、标签换行和正文页间距。
+- Claude / Typography：修复菜单与子菜单图标条件，避免空图标占位。
+- Game / Nobelium / Plog：补齐折叠菜单子项图标显示。
+- 多个主题：修复加密文章提交按钮在窄屏下被输入框挤压的问题。
+- 公共分享栏：移动端改为横向滚动，避免分享按钮被压缩变形。
 
 ## 主题预览图
 
@@ -66,12 +80,14 @@
 | `landing` | Landing | 单页着陆 | [landing.md](./landing.md) |
 | `starter` | Starter | 营销落地页区块 | [starter.md](./starter.md) |
 | `proxio` | Proxio | 作品集/品牌站 | [proxio.md](./proxio.md) |
+| `opc` | Opc | 一人公司/AI 任务流水线入口 | [opc.md](./opc.md) |
 | `commerce` | Commerce | 商品展示 | [commerce.md](./commerce.md) |
 | `magzine` | Magazine | 杂志封面风（目录名 `magzine`） | [magzine.md](./magzine.md) |
 | `claude` | Claude | 文档风 + 贡献热力图首页 | [claude.md](./claude.md) · [CLAUDE.md](../../developer/themes/CLAUDE.md) |
 | `endspace` | Endspace | 终末工业风加载与侧栏 | [endspace.md](./endspace.md) · [ENDSPACE.md](../../developer/themes/ENDSPACE.md) |
 | `example` | Example | 主题开发骨架 | [example.md](./example.md) |
 | `thoughtlite` | ThoughtLite | 时间线首页 + Latest 卡片 | [thoughtlite.md](./thoughtlite.md) · [THOUGHTLITE.md](../../developer/themes/THOUGHTLITE.md) |
+| `xuhome` | XuHome | 新粗野主义卡片博客 + Hero 打字机 | [xuhome.md](./xuhome.md) |
 
 ## 主题切换挂件
 

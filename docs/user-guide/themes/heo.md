@@ -25,9 +25,41 @@
 
 将代码版本更新到4.0以后
 
-将您的默认主题设置为HEO，相关的所有配置都可以在[ /themes/heo/config.js ](https://github.com/tangly1024/NotionNext/blob/main/themes/heo/config.js)文件中找到。接下来我会介绍这个主题的功能区。
+将您的默认主题设置为HEO，相关的所有配置都可以在[ /themes/heo/config.js ](https://github.com/notionnext-org/NotionNext/blob/main/themes/heo/config.js)文件中找到。接下来我会介绍这个主题的功能区。
 
 ![Untitled](/legacy/c18a66ba4b1525db.png)
+
+## HEO 主题调色
+
+HEO 主题开始支持语义化颜色配置。早期主题中大量使用 Tailwind CSS 固定色名，是为了快速开发；现在可以优先通过 `HEO_COLOR_*` 配置项调整主题色，避免直接修改组件里的 className。
+
+这些配置可以写在 Notion Config、环境变量或 `themes/heo/config.js` 中。Notion Config 优先级更高，适合站长在线调整。
+
+| 配置项 | 默认值 | 影响范围 |
+| --- | --- | --- |
+| `HEO_COLOR_PRIMARY` | `#4f65f0` | 主按钮、选中态、信息卡主背景、重点链接 |
+| `HEO_COLOR_PRIMARY_HOVER` | `#4f46e5` | 主色 hover、信息卡内按钮 |
+| `HEO_COLOR_PRIMARY_TEXT` | `#ffffff` | 主色背景上的文字 |
+| `HEO_COLOR_ACCENT` | `#dca846` | 深色模式强调色、徽标和辅助高亮 |
+| `HEO_COLOR_BG` | `#f7f9fe` | 浅色模式页面背景 |
+| `HEO_COLOR_BG_DARK` | `#18171d` | 深色模式页面背景 |
+| `HEO_COLOR_CARD` | `#ffffff` | 浅色模式卡片背景 |
+| `HEO_COLOR_CARD_DARK` | `#1e1e1e` | 深色模式卡片背景 |
+| `HEO_COLOR_CARD_MUTED` | `#f1f3f8` | 浅色弱背景、计数徽标背景 |
+| `HEO_COLOR_BORDER` | `#4f46e5` | 浅色模式 hover 边框 |
+| `HEO_COLOR_BORDER_DARK` | `#dca846` | 深色模式 hover 边框 |
+| `HEO_COLOR_TEXT` | `#111827` | 主文字色 |
+| `HEO_COLOR_TEXT_SECONDARY` | `#4b5563` | 次级文字色 |
+
+示例：
+
+```js
+HEO_COLOR_PRIMARY: '#7c3aed',
+HEO_COLOR_PRIMARY_HOVER: '#6d28d9',
+HEO_COLOR_ACCENT: '#f59e0b'
+```
+
+后续主题切换工具会逐步加入调色板入口，直接显示当前主题支持的颜色配置键和色值，方便复制到 Notion Config。
 
 图中从上往下分别标注了6个区域，他们分别的功能和配置内容如下：
 
@@ -50,7 +82,7 @@
 
 ### 英雄区左侧
 
-1. **左上角的卡牌**点击是随机跳转到一篇文章，此功能无法修改配置，但是可以在源代码[themes/heo/components/Hero.js](https://github.com/tangly1024/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/components/Hero.js#L58)中看到。
+1. **左上角的卡牌**点击是随机跳转到一篇文章，此功能无法修改配置，但是可以在源代码[themes/heo/components/Hero.js](https://github.com/notionnext-org/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/components/Hero.js#L58)中看到。
 ```JavaScript
 // 跳转到任意文章
   function handleClickBanner() {
@@ -60,7 +92,7 @@
   }
 ```
 
-1. **左上卡牌大标题** [themes/heo/config.js](https://github.com/tangly1024/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L12C1-L15C34)
+1. **左上卡牌大标题** [themes/heo/config.js](https://github.com/notionnext-org/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L12C1-L15C34)
 ![Untitled](/legacy/9db05c53471e735b.png)
 ```JavaScript
 // 英雄区(首页顶部大卡)
@@ -69,7 +101,7 @@ HERO_TITLE_2: '与思维认知',
 HERO_TITLE_3: 'TANGLY1024.COM',
 ```
 
-1. **左上角卡牌背景滚动图**，会循环展示一些技能的图标，可以在 [themes/heo/config.js](https://github.com/tangly1024/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L38)中配置
+1. **左上角卡牌背景滚动图**，会循环展示一些技能的图标，可以在 [themes/heo/config.js](https://github.com/notionnext-org/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L38)中配置
 <details>
 <summary>展开相关代码</summary>
 
@@ -138,7 +170,7 @@ HERO_TITLE_3: 'TANGLY1024.COM',
 </details>
 ![Untitled](/legacy/447da302a4673a35.png)
 
-1. **左下角三个导航标签**，点击跳到特定页面，可以在 [themes/heo/configs.js](https://github.com/tangly1024/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L20-L23) 中配置
+1. **左下角三个导航标签**，点击跳到特定页面，可以在 [themes/heo/configs.js](https://github.com/notionnext-org/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L20-L23) 中配置
 ![Untitled](/legacy/e35b224d4c228111.png)
 ```JavaScript
 // 英雄区显示三个置顶分类
@@ -153,7 +185,7 @@ HERO_CATEGORY_3: { title: '实用教程', url: '/tag/实用教程' },
 ![Untitled](/legacy/9907a9bffcfe3c0c.png)
 
 ### 英雄区右侧
-显示置顶文章的标题文字，以及跳转链接， 配置方式 [themes/heo/config.js](https://github.com/tangly1024/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L16-L18)
+显示置顶文章的标题文字，以及跳转链接， 配置方式 [themes/heo/config.js](https://github.com/notionnext-org/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L16-L18)
 ![Untitled](/legacy/965acb63a2b281e2.png)
 ```JavaScript
 HERO_TITLE_4: '新版上线',
@@ -179,7 +211,7 @@ HERO_RECOMMEND_POST_TAG: '推荐',
 ![Untitled](/legacy/ca196d12d53b0565.png)
 https://notion.so/signed/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F4ff9b53a-b204-4696-8d8c-b4c01bc05e50%2FUntitled.mp4?table=block&id=74bfbeea-9fb8-4208-9399-4b7034d14741
   1. 个人资料卡牌**欢迎语**
-此处的文字点击会发生变化，在 [themes/heo/config.js](https://github.com/tangly1024/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L26-L34) 中配置
+此处的文字点击会发生变化，在 [themes/heo/config.js](https://github.com/notionnext-org/NotionNext/blob/b9f52f386c1a7110a15ba5bf005c8eccb190b1f3/themes/heo/config.js#L26-L34) 中配置
 ![Untitled](/legacy/9221764faff2cd6d.png)
 ```JavaScript
 INFOCARD_GREETINGS: [
@@ -192,6 +224,17 @@ INFOCARD_GREETINGS: [
     '🧱 团队小组发动机'
   ],
 ```
+`HEO_INFO_CARD_AVATAR_BLUR` 用于控制文章详情页右侧信息卡头像样式。默认值为 `true`，保留原有的大尺寸模糊装饰头像；设置为 `false` 时，文章页头像会与首页信息卡保持一致，显示为普通小头像。
+
+`CONTACT_ORCID` 用于控制 HEO 信息卡中的 ORCID 按钮。填写完整的 ORCID 主页 URL 后，按钮会与现有 GitHub 等社交按钮一起显示；留空时不会渲染。
+
+`HEO_INFO_CARD_ICON_ORCID` 用于覆盖该按钮的 Font Awesome 图标类名，默认值为 `fab fa-orcid`。通常无需修改；如需自定义，可在 Notion Config 中设置同名键，或直接修改 `themes/heo/config.js`。
+
+`CONTACT_CSDN` 和 `CONTACT_JUEJIN` 分别用于控制 HEO 信息卡中的 CSDN、稀土掘金按钮。填写对应个人主页的完整 URL 后显示，留空时不会渲染。
+
+`HEO_INFO_CARD_ICON_CSDN` 和 `HEO_INFO_CARD_ICON_JUEJIN` 可分别覆盖两个按钮的图标类名，默认值为 `fab fa-csdn` 和 `fab fa-juejin`。
+
+
 下方的 Tangly是显示作者名字，在blog.config.js中配置
   1. **公告栏**， 卡牌中间的文字是公告内容
 ![Untitled](/legacy/ad1cf348d91ede21.png)

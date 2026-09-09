@@ -50,9 +50,22 @@ Starter主题需要自定配置的内容比较多，修改代码和配置环境�
 在目前的版本中，所有的主题配置都支持在Notion_Config中配置了。例如要修改作者成员，可以直接在Notion_config中添加如下配置
 
 
-## Starter主题配色
+## Starter主题调色
 
-主题默认是蓝色，您可以通过修改GLOBAL_CSS的方式来调整主题的颜色：修改方式如下图：
+Starter 主题默认是蓝色。现在推荐优先使用主题色变量调色，不再建议用 `GLOBAL_CSS` 覆盖 `.bg-primary`、`.text-primary` 这类 Tailwind 语义类名。
+
+可在 Notion Config 表或 `themes/starter/config.js` 中配置：
+
+```js
+STARTER_COLOR_PRIMARY: '#3758f9'
+STARTER_COLOR_PRIMARY_HOVER: '#1b44c8'
+STARTER_COLOR_DARK: '#111928'
+STARTER_COLOR_TEXT_MUTED: '#637381'
+```
+
+也可以在全局主题工具中切换到 Starter 后查看当前调色板，复制需要覆盖的配置项。
+
+旧版本可以通过修改GLOBAL_CSS的方式来调整主题的颜色：修改方式如下图：
 
 ![image.png](/legacy/a3d3a1f5aa3ed592.png)
 
@@ -123,7 +136,7 @@ Starter主题需要自定配置的内容比较多，修改代码和配置环境�
   STARTER_HERO_BUTTON_1_TEXT: '开始体验', // 英雄区按钮
   STARTER_HERO_BUTTON_1_URL: '/user-guide/deploy-vercel', // 英雄区按钮
   STARTER_HERO_BUTTON_2_TEXT: '在Github上关注', // 英雄区按钮
-  STARTER_HERO_BUTTON_2_URL: 'https://github.com/tangly1024/NotionNext', // 英雄区按钮
+  STARTER_HERO_BUTTON_2_URL: 'https://github.com/notionnext-org/NotionNext', // 英雄区按钮
   STARTER_HERO_PREVIEW_IMAGE: '/images/starter/hero/hero-image.webp', // 产品预览图 ，默认读取public目录下图片； 您可以上传自己的图片至/public/starter/hero目录下；
 ```
 
@@ -161,7 +174,7 @@ Starter主题需要自定配置的内容比较多，修改代码和配置环境�
   STARTER_FEATURE_1_TITLE_1: '免费且开源', // 特性1
   STARTER_FEATURE_1_TEXT_1: '项目源码在Github上完全开放共享，遵循MIT协议', // 特性1
   STARTER_FEATURE_1_BUTTON_TEXT: '了解更多', // 特性1
-  STARTER_FEATURE_1_BUTTON_URL: 'https://github.com/tangly1024/NotionNext', // 特性1
+  STARTER_FEATURE_1_BUTTON_URL: 'https://github.com/notionnext-org/NotionNext', // 特性1
 
   STARTER_FEATURE_2_TITLE_1: '多种主题定制', // 特性2
   STARTER_FEATURE_2_TEXT_1: '数十种主题,适用于不同场景，总有一款适合你', // 特性2
@@ -339,7 +352,7 @@ STARTER_TESTIMONIALS_TITLE: '用户反馈',
 ```JavaScript
 STARTER_TEAM_TITLE: '团队成员',
   STARTER_TEAM_TEXT_1: '我们的开发者团队',
-  STARTER_TEAM_TEXT_2: 'NotionNext 由众多开源技术爱好者们共同合作完成，感谢每一位&lt;a className="underline" href="https://github.com/tangly1024/NotionNext/graphs/contributors"&gt;贡献者&lt;/a&gt;',
+  STARTER_TEAM_TEXT_2: 'NotionNext 由众多开源技术爱好者们共同合作完成，感谢每一位&lt;a className="underline" href="https://github.com/notionnext-org/NotionNext/graphs/contributors"&gt;贡献者&lt;/a&gt;',
 
   // 这里不支持CONFIG和环境变量，需要一一修改此处代码。
   STARTER_TEAM_ITEMS: [

@@ -32,8 +32,26 @@
 
 需要注意，此主题的首页标题读取的是配置文件 /themes/typography/config.js 中的内容，而非默认的读取notion数据库标题，因此需要手动修改。（支持环境变量或Notion_Config修改）。
 
+### Typography 主题调色
+
+Typography 支持通过语义色变量调整主色和标题色：
+
+```js
+TYPOGRAPHY_COLOR_PRIMARY: '#2e405b',
+TYPOGRAPHY_COLOR_TITLE: '#276077'
+```
+
+主题工具中的调色板会展示当前值，并可直接复制配置项到 Notion Config。
+
+### 菜单图标
+
+`4.10.9` 修复了 Typography 主题普通菜单和子菜单图标显示问题。若 Notion 菜单数据中填写了 icon 类名，菜单项会显示自身配置的图标；未配置 icon 的子菜单不会再生成空白图标占位。
+
 ```JavaScript
 const CONFIG = {
+  TYPOGRAPHY_COLOR_PRIMARY: '#2e405b',
+  TYPOGRAPHY_COLOR_TITLE: '#276077',
+
   // 博客標題 雙語言
   TYPOGRAPHY_BLOG_NAME: process.env.NEXT_PUBLIC_TYPOGRAPHY_BLOG_NAME || '活字印刷',
   TYPOGRAPHY_BLOG_NAME_EN: process.env.NEXT_PUBLIC_TYPOGRAPHY_BLOG_NAME || 'Typography',

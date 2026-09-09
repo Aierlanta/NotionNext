@@ -1,7 +1,7 @@
 # Simple主题
 > 迁移自：[Simple主题](https://docs.tangly1024.com/article/notionnext-simple)
 > 发布日期：2024-3-19
-> 最后编辑：2025-7-7
+> 最后编辑：2026-8-27
 > 原栏目：⭐ 主题参数
 
 
@@ -16,6 +16,17 @@ NotionNext 4.0 系列，用户首次安装的默认主题是Simple。这也是�
 
 配置文件在 themes/simple/config.js 中
 
+### Simple 主题调色
+
+Simple 支持通过语义色变量调整主色和标题色：
+
+```js
+SIMPLE_COLOR_PRIMARY: '#dd3333',
+SIMPLE_COLOR_TITLE: '#276077'
+```
+
+主题工具中的调色板会展示当前值，并可直接复制配置项到 Notion Config。
+
 ```JavaScript
 const CONFIG = {
 
@@ -27,6 +38,9 @@ const CONFIG = {
   SIMPLE_AUTHOR_LINK: process.env.NEXT_PUBLIC_AUTHOR_LINK || '#',
 
   SIMPLE_POST_AD_ENABLE: process.env.NEXT_PUBLIC_SIMPLE_POST_AD_ENABLE || false, // 文章列表是否插入广告
+
+  SIMPLE_COLOR_PRIMARY: '#dd3333',
+  SIMPLE_COLOR_TITLE: '#276077',
 
   SIMPLE_POST_COVER_ENABLE: process.env.NEXT_PUBLIC_SIMPLE_POST_COVER_ENABLE || false, // 是否展示博客封面
 
@@ -40,6 +54,21 @@ const CONFIG = {
 }
 export default CONFIG
 ```
+
+
+### 不蒜子访问统计
+
+Simple 主题支持复用全局 `ANALYTICS_BUSUANZI_ENABLE` 配置展示不蒜子访问统计。
+
+开启后：
+
+- Header 显示站点访问量和访客数：`访问量 xxx · 访客数 xxx`
+- Footer 显示图标形式的站点访问量和访客数
+- Header 和 Footer 均使用站点级的 `site_pv` 和 `site_uv` 数据
+
+关闭 `ANALYTICS_BUSUANZI_ENABLE` 后，Header 和 Footer 均不展示上述统计信息。
+
+更多统计配置见 [站点统计相关](../analytics/overview.md)。
 
 
 ## FAQ

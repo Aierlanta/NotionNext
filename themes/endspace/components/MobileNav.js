@@ -25,9 +25,37 @@ import WechatFillIcon from 'remixicon-react/WechatFillIcon'
 import GlobeFillIcon from 'remixicon-react/GlobeFillIcon'
 import MailFillIcon from 'remixicon-react/MailFillIcon'
 
+const OrcidIcon = ({ size = 16 }) => (
+  <i
+    className='fab fa-orcid'
+    aria-hidden='true'
+    style={{ fontSize: size, lineHeight: 1 }}
+  />
+)
+
+const CsdnIcon = ({ size = 16 }) => (
+  <i
+    className='fab fa-csdn'
+    aria-hidden='true'
+    style={{ fontSize: size, lineHeight: 1 }}
+  />
+)
+
+const JuejinIcon = ({ size = 16 }) => (
+  <i
+    className='fab fa-juejin'
+    aria-hidden='true'
+    style={{ fontSize: size, lineHeight: 1 }}
+  />
+)
+
+
 // Social icon mapping
 const SocialIconComponents = {
   'CONTACT_GITHUB': GithubFillIcon,
+  'CONTACT_ORCID': OrcidIcon,
+  'CONTACT_CSDN': CsdnIcon,
+  'CONTACT_JUEJIN': JuejinIcon,
   'CONTACT_TWITTER': IconBrandX,
   'CONTACT_WEIBO': WeiboFillIcon,
   'CONTACT_BILIBILI': BilibiliFillIcon,
@@ -66,6 +94,9 @@ export const MobileNav = (props) => {
   // Social icon config - using contact.config.js settings
   const socialLinks = [
     { key: 'CONTACT_GITHUB', label: 'GitHub' },
+    { key: 'CONTACT_ORCID', label: 'ORCID' },
+    { key: 'CONTACT_CSDN', label: 'CSDN' },
+    { key: 'CONTACT_JUEJIN', label: '稀土掘金' },
     { key: 'CONTACT_TWITTER', label: 'X' },
     { key: 'CONTACT_WEIBO', label: 'Weibo' },
     { key: 'CONTACT_BILIBILI', label: 'Bilibili' },

@@ -967,6 +967,222 @@ describe('Notion data format compatibility', () => {
     ])
   })
 
+  it('sorts embedded collection results from query2 date sorts', () => {
+    const blockMap = {
+      block: {
+        later_page: {
+          value: {
+            id: 'later_page',
+            type: 'page',
+            properties: {
+              date: [['‣', [['d', { start_date: '2026-07-18' }]]]]
+            }
+          }
+        },
+        earlier_page: {
+          value: {
+            id: 'earlier_page',
+            type: 'page',
+            properties: {
+              date: [['‣', [['d', { start_date: '2026-07-01' }]]]]
+            }
+          }
+        }
+      },
+      collection: {
+        collection_1: {
+          value: {
+            schema: {
+              date: { name: 'Date', type: 'date' }
+            }
+          }
+        }
+      },
+      collection_view: {
+        view_1: {
+          value: {
+            value: {
+              id: 'view_1',
+              page_sort: ['later_page', 'earlier_page'],
+              format: {
+                collection_pointer: { id: 'collection_1' }
+              },
+              query2: {
+                sort: [{ property: 'Date', direction: 'ascending' }]
+              }
+            }
+          }
+        }
+      },
+      collection_query: {
+        collection_1: {
+          view_1: {
+            collection_group_results: {
+              blockIds: ['later_page', 'earlier_page']
+            }
+          }
+        }
+      }
+    }
+
+    filterCollectionViewData(blockMap)
+
+    expect(
+      blockMap.collection_query.collection_1.view_1.collection_group_results
+        .blockIds
+    ).toEqual(['earlier_page', 'later_page'])
+    expect(blockMap.collection_view.view_1.value.value.page_sort).toEqual([
+      'earlier_page',
+      'later_page'
+    ])
+  })
+
+  it('sorts embedded collection date results by time on the same day', () => {
+    const blockMap = {
+      block: {
+        evening_page: {
+          value: {
+            id: 'evening_page',
+            type: 'page',
+            properties: {
+              date: [
+                ['‣', [['d', { start_date: '2026-07-18', start_time: '18:00' }]]]
+              ]
+            }
+          }
+        },
+        morning_page: {
+          value: {
+            id: 'morning_page',
+            type: 'page',
+            properties: {
+              date: [
+                ['‣', [['d', { start_date: '2026-07-18', start_time: '09:00' }]]]
+              ]
+            }
+          }
+        }
+      },
+      collection: {
+        collection_1: {
+          value: {
+            schema: {
+              date: { name: 'Date', type: 'date' }
+            }
+          }
+        }
+      },
+      collection_view: {
+        view_1: {
+          value: {
+            value: {
+              id: 'view_1',
+              format: {
+                collection_pointer: { id: 'collection_1' }
+              },
+              query2: {
+                sort: [{ property: 'date', direction: 'ascending' }]
+              }
+            }
+          }
+        }
+      },
+      collection_query: {
+        collection_1: {
+          view_1: {
+            collection_group_results: {
+              blockIds: ['evening_page', 'morning_page']
+            }
+          }
+        }
+      }
+    }
+
+    filterCollectionViewData(blockMap)
+
+    expect(
+      blockMap.collection_query.collection_1.view_1.collection_group_results
+        .blockIds
+    ).toEqual(['morning_page', 'evening_page'])
+  })
+
+  it('sorts embedded collection results from query2 select sorts by option order', () => {
+    const blockMap = {
+      block: {
+        cherry_page: {
+          value: {
+            id: 'cherry_page',
+            type: 'page',
+            properties: {
+              category: [['樱桃']]
+            }
+          }
+        },
+        apple_page: {
+          value: {
+            id: 'apple_page',
+            type: 'page',
+            properties: {
+              category: [['苹果']]
+            }
+          }
+        }
+      },
+      collection: {
+        collection_1: {
+          value: {
+            schema: {
+              category: {
+                name: 'Category',
+                type: 'select',
+                options: [
+                  { id: 'option_apple', name: '苹果', value: '苹果' },
+                  { id: 'option_cherry', name: '樱桃', value: '樱桃' }
+                ]
+              }
+            }
+          }
+        }
+      },
+      collection_view: {
+        view_1: {
+          value: {
+            value: {
+              id: 'view_1',
+              page_sort: ['cherry_page', 'apple_page'],
+              format: {
+                collection_pointer: { id: 'collection_1' }
+              },
+              query2: {
+                sort: [{ property: 'Category', direction: 'ascending' }]
+              }
+            }
+          }
+        }
+      },
+      collection_query: {
+        collection_1: {
+          view_1: {
+            collection_group_results: {
+              blockIds: ['cherry_page', 'apple_page']
+            }
+          }
+        }
+      }
+    }
+
+    filterCollectionViewData(blockMap)
+
+    expect(
+      blockMap.collection_query.collection_1.view_1.collection_group_results
+        .blockIds
+    ).toEqual(['apple_page', 'cherry_page'])
+    expect(blockMap.collection_view.view_1.value.value.page_sort).toEqual([
+      'apple_page',
+      'cherry_page'
+    ])
+  })
+
   it('inherits sibling filters for embedded collection views without filters', () => {
     const blockMap = {
       block: {

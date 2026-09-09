@@ -13,6 +13,10 @@
 新主题，需要升级到V4.7.1之后的版本才能使用
 :::
 
+::: tip 4.10.10 更新
+文章页广告与右侧栏间距已恢复，升级到 `4.10.10` 后同步最新代码并重新部署即可，无需新增配置。
+:::
+
 ![桌面端](/legacy/e5089e1db6109fc0.png)
 ![移动端](/legacy/aa0f0b759ff50dec.png)
 
@@ -89,11 +93,25 @@ Notion中排名靠前的文章，除了首屏展示的文章，剩下的依次�
 
 在/themes/magzine/config.js 中可以找到该主题支持的所有配置，主要内容和说明如下：
 
+### Magzine 主题调色
+
+Magzine 支持通过语义色变量调整页面背景和滚动条：
+
+```js
+MAGZINE_COLOR_BG: '#f6f6f1',
+MAGZINE_COLOR_SCROLLBAR: '#4e4e4e'
+```
+
+主题工具中的调色板会展示当前值，并可直接复制配置项到 Notion Config。
+
 <details>
 <summary>主题支持配置的相关代码，点击展开：</summary>
 
 ```JavaScript
 const CONFIG = {
+  MAGZINE_COLOR_BG: '#f6f6f1',
+  MAGZINE_COLOR_SCROLLBAR: '#4e4e4e',
+
   // 首屏信息栏按钮文字
   MAGZINE_HOME_BANNER_ENABLE: true, // 首屏右上角的宣传位是否开启
   MAGZINE_HOME_BUTTON: true,
@@ -144,7 +162,7 @@ const CONFIG = {
     {
       name: '开发者',
       menus: [
-        { title: 'Github', href: 'https://github.com/tangly1024/NotionNext' },
+        { title: 'Github', href: 'https://github.com/notionnext-org/NotionNext' },
         { title: '关于作者', href: '/about' }
       ]
     },
@@ -195,7 +213,7 @@ export default CONFIG
     {
       name: '开发者',
       menus: [
-        { title: 'Github', href: 'https://github.com/tangly1024/NotionNext' },
+        { title: 'Github', href: 'https://github.com/notionnext-org/NotionNext' },
         { title: '关于作者', href: '/about' }
       ]
     },
@@ -252,7 +270,7 @@ export default CONFIG
         "menus": [
             {
                 "title": "Github",
-                "href": "https://github.com/tangly1024/NotionNext"
+                "href": "https://github.com/notionnext-org/NotionNext"
             },
             {
                 "title": "开发帮助",
@@ -260,11 +278,11 @@ export default CONFIG
             },
             {
                 "title": "功能反馈",
-                "href": "https://github.com/tangly1024/NotionNext/issues/new/choose"
+                "href": "https://github.com/notionnext-org/NotionNext/issues/new/choose"
             },
             {
                 "title": "技术讨论",
-                "href": "https://github.com/tangly1024/NotionNext/discussions"
+                "href": "https://github.com/notionnext-org/NotionNext/discussions"
             },
             {
                 "title": "关于作者",
