@@ -70,5 +70,8 @@ tsconfig.tsbuildinfo
 webpack-internal:/
 .bce-tool/
 
+# Local AI planning and review records
+/_project-ai/
+
 # Local Cloudflare Worker route configuration
 /cloudflare/notion-image-proxy/wrangler.toml
